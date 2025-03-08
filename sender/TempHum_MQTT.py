@@ -21,6 +21,7 @@ mqtt_pass = ''
 client_id = ubinascii.hexlify(machine.unique_id())
 topic_pub_temp = b'temperature'
 topic_pub_hum = b'humidity'
+topic_pub_cput = b'monitorcput'
 
 sensor_dht = dht.DHT22(Pin(23))
 
@@ -60,12 +61,14 @@ while (1):
         sensor_dht.measure()
         humidity = sensor_dht.humidity()
         temperature = sensor_dht.temperature()
+cput = esp.raw_temperature()
         print(f"Humidité : {humidity} %")
         print(f"Température: {temperature} C")
         print(f"Température CPU: {cput} C")
         client.ping()
         client.publish(topic_pub_temp, str(temperature).encode())
         client.publish(topic_pub_hum, str(humidity).encode())
+client.publish(topic_pub_cput, str(cput).encode())
     except Exception as e:
         print(f"Erreur DHT22 : {e}")
         humidity = None
